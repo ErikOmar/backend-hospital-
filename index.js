@@ -1,7 +1,7 @@
 require('dotenv').config();
 const express = require('express');
 const cors = require('cors');
-const { dbConnection } = require('./database/config');
+const {dbConnection} = require('./database/config');
 
 // Crear el servidor de express
 const app = express();
@@ -17,7 +17,11 @@ app.use(express.json())
 
 // Rutas
 app.use('/api/usuarios', require('./routes/usuarios'));
+app.use('/api/hospitales', require('./routes/hospitales'));
+app.use('/api/medicos', require('./routes/medicos'));
+app.use('/api/busquedas', require('./routes/busquedas'));
 app.use('/api/login', require('./routes/auth'));
+app.use('/api/uploads', require('./routes/uploads'));
 
 // Ruta ejercicio ejemplo
 // app.get('/', function (req, res) {
@@ -27,5 +31,5 @@ app.use('/api/login', require('./routes/auth'));
 // });
 
 app.listen(process.env.PORT, () => {
-    console.log("Servidor corriendoe en el puerto \x1b[33m%s\x1b[0m", process.env.PORT);
+  console.log("Servidor corriendoe en el puerto \x1b[33m%s\x1b[0m", process.env.PORT);
 })
