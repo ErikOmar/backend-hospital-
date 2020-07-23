@@ -4,7 +4,7 @@ const Hospital = require('../models/Hospital');
 const getHospitales = async (req, res) => {
 
     const hospitales = await Hospital.find()
-                                     .populate('usuario','nombre img');
+        .populate('usuario', 'nombre img');
 
     res.json({
         ok: true,
@@ -17,11 +17,12 @@ const crearHospital = async (req, res = response) => {
     const uid = req.uid;
     const hospital = new Hospital({
         usuario: uid,
-        ...req.body});
-        const { nombre } = hospital;
+        ...req.body
+    });
+    const { nombre } = hospital;
 
     try {
-        
+
         const existeHospital = await Hospital.findOne({ nombre });
 
         if (existeHospital) {
@@ -45,31 +46,75 @@ const crearHospital = async (req, res = response) => {
         });
     }
 
-        
-  
+
+
 }
 
 const actualizarHospital = async (req, res = response) => {
- 
+
+    const hid = req.params.id;
+    const uid = req.uid;
+
+    try {
+
+
+        const hospitalDB = await Hospital.findById(hid);
+
+        if (!hospitalDB) {
+            res.status(400).json({
+                ok: false,
+                msg: "No existe un hospital con el id proporciado"
+            })
+        }
+
+        const cambiosHospital = {
+            ...req.body,
+            usuario: uid
+        }
+
+        const hospitalActualizado = await Hospital.findByIdAndUpdate(hid, cambiosHospital, { new: true })
+
 
         res.json({
             ok: true,
-            // uid,
-            // Hospital: HospitalActualizado,
-            msg: 'actualizarHospital ' + req.params.id
+            hospital: hospitalActualizado
         });
+    } catch (error) {
+        console.log(error);
+        res.status(400).json({
+            ok: false,
+            msg: "Hable con el administrador"
+        })
+    }
 
- 
+
 };
 
 const borrarHospital = async (req, res = response) => {
 
-        
+    const hid = req.params.id;
+    try {
+
+        const hospitalDB = await Hospital.findById(hid);
+
+        if (!hospitalDB) {
+            res.status(400).json({
+                ok: false,
+                msg: 'No existe hospital con el id'
+            })
+        }
+
+        await Hospital.findByIdAndDelete(hid);
+
         res.json({
             ok: true,
-            // Hospital: HospitalBorrado,
+            hospital: hospitalDB,
             msg: 'borrarHospital'
         });
+
+    } catch (error) {
+
+    }
 
 }
 
